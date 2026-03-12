@@ -127,7 +127,7 @@ a {
   gap: 14px;
 }
 
-@media (max-width: 980px) {
+@media (max-width: 768px) {
   .layout {
     grid-template-columns: 1fr;
   }
@@ -136,7 +136,7 @@ a {
 /* Buttons / Inputs */
 .btn {
   border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0);
   color: var(--text);
   padding: 10px 12px;
   border-radius: 12px;
@@ -150,7 +150,7 @@ a {
 }
 
 .btn:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(99, 33, 33, 0.315);
   border-color: rgba(255, 255, 255, 0.18);
 }
 
@@ -183,7 +183,7 @@ a {
 }
 
 .icon-btn:hover {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(122, 31, 31, 0.1);
   border-color: rgba(255, 255, 255, 0.18);
 }
 
@@ -247,7 +247,7 @@ a {
   height: 10px;
   border-radius: 99px;
   display: inline-block;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid rgba(3, 3, 3, 0.22);
 }
 
 .dot--work {
@@ -263,7 +263,7 @@ a {
 .calendar__grid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
 }
 
 .weekday {
@@ -276,19 +276,20 @@ a {
 
 .day {
   position: relative;
-  border-radius: 14px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.04);
-  min-height: 74px;
-  padding: 8px;
+  min-height: 60px;
+  padding: 6px;
   cursor: pointer;
+  overflow: hidden;
   transition: transform 90ms ease, background 120ms ease, border-color 120ms ease;
 }
 
 .day:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(53, 50, 50, 0.089);
+  border-color: rgba(219, 139, 139, 0.16);
 }
 
 .day--muted {
@@ -297,41 +298,44 @@ a {
 
 .day__num {
   font-weight: 800;
-  font-size: 13px;
+  font-size: 20px;
+  color: rgb(8, 247, 247);
 }
 
 .badge {
   position: absolute;
-  right: 1px;
-  top: 45px;
-  font-size: 4px;
-  font-weight: 800;
-  padding: 10px 4px;
-  border-radius: 888px;
-  border: 4px solid rgba(255, 255, 255, 0.16);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--muted);
+  inset: 0;
+  border-radius: 3px;
+  font-size: 9px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events : none;
+  
 }
 
 .day--work .badge {
-  background: rgba(255, 183, 3, 0.12);
-  border-color: rgba(255, 183, 3, 0.22);
-  color: rgba(255, 230, 170, 0.96);
+  background: rgba(241, 181, 27, 0.521);
+  border-color: rgba(31, 3, 5, 0.938);
+  color: rgba(43, 10, 80, 0.96);
 }
 
 .day--off .badge {
-  background: rgba(76, 201, 240, 0.12);
-  border-color: rgba(76, 201, 240, 0.22);
-  color: rgba(184, 241, 255, 0.96);
+  background: rgba(27, 143, 158, 0.747);
+  border-color: rgba(2, 97, 126, 0.22);
+  color: rgba(95, 0, 36, 0.96);
 }
 
 .day--today {
-  outline: 2px solid rgba(181, 23, 158, 0.65);
+  outline: 2px solid rgba(190, 12, 164, 0.65);
   outline-offset: 2px;
 }
 
 .day--selected {
-  border-color: rgba(255, 255, 255, 0.28);
+  border-color: rgba(163, 23, 23, 0.28);
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.10);
 }
 
