@@ -1,5 +1,14 @@
 const STORAGE_KEY = "myCalendar:v1";
 
+// ОФИЦИАЛЬНАЯ ТОЧКА ОТСЧЁТА ДЛЯ ВСЕХ ПОСЕТИТЕЛЕЙ
+// date  – дата начала первой рабочей смены (день 1 из 3)
+// type  – тип этого дня: "work" (работа) или "off" (выходной)
+// СЕЙЧАС: смена начинается 17.03.2026 и это рабочий день.
+const OFFICIAL_ANCHOR = {
+  date: "2026-03-17",
+  type: "work",
+};
+
 function pad2(n) {
   return String(n).padStart(2, "0");
 }
@@ -46,8 +55,9 @@ function weekdayShortRU() {
 function loadState() {
   const now = new Date();
   const fallback = {
-    anchorDate: toISODateLocal(now),
-    anchorType: "work", // work | off
+    // График всегда берём из OFFICIAL_ANCHOR, а не из localStorage.
+    anchorDate: OFFICIAL_ANCHOR.date,
+    anchorType: OFFICIAL_ANCHOR.type, // work | off
     notes: {}, // yyyy-mm-dd -> string
   };
 
@@ -55,9 +65,11 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return fallback;
     const parsed = JSON.parse(raw);
+    // ВОЗВРАЩАЕМ:
+    // - anchorDate / anchorType ТОЛЬКО из OFFICIAL_ANCHOR (через fallback),
+    // - из сохранённого состояния берём только заметки.
     return {
       ...fallback,
-      ...parsed,
       notes: typeof parsed?.notes === "object" && parsed.notes ? parsed.notes : {},
     };
   } catch {
@@ -128,18 +140,20 @@ function getShareUrl(state) {
 }
 
 function applyStateFromUrl(state) {
-  const url = new URL(window.location.href);
-  const anchor = url.searchParams.get("anchor");
-  const type = url.searchParams.get("type");
-
-  const anchorDate = anchor ? parseISODateLocal(anchor) : null;
-  const anchorType = type === "work" || type === "off" ? type : null;
-
-  if (anchorDate && anchor) state.anchorDate = anchor;
-  if (anchorType) state.anchorType = anchorType;
+  // Раньше через параметры anchor/type в ссылке можно было менять график.
+  // Теперь официальный график один для всех, поэтому здесь НИЧЕГО не меняем.
+  // Функция оставлена только для совместимости с остальным кодом.
+  return state;
 }
 
 function main() {
+  const url = new URL(window.location.href);
+
+  // РЕЖИМ ВЛАДЕЛЬЦА (ТОЛЬКО ДЛЯ ТЕБЯ)
+  // Если в адресе есть ?owner=1 — показываем блок настроек.
+  // Для обычных посетителей (без этого параметра) настройки скрыты.
+  const IS_OWNER_MODE = url.searchParams.get("owner") === "1";
+
   const els = {
     monthTitle: document.getElementById("monthTitle"),
     calendarGrid: document.getElementById("calendarGrid"),
@@ -160,6 +174,15 @@ function main() {
     btnDeleteNote: document.getElementById("btnDeleteNote"),
 
     feedbackLink: document.getElementById("feedbackLink"),
+
+    // Обёртки вокруг блока настроек (чтобы можно было их скрывать)
+    settingsTitle: document.getElementById("settingsTitle"),
+    settingsAnchorDate: document.getElementById("settingsAnchorDate"),
+    settingsAnchorType: document.getElementById("settingsAnchorType"),
+    settingsButtons: document.getElementById("settingsButtons"),
+
+    // Блок с заметками (тоже только для тебя)
+    notesSection: document.getElementById("notesSection"),
   };
 
   let state = loadState();
@@ -264,33 +287,48 @@ function main() {
     els.feedbackLink.href = `https://t.me/${telegramUsername}`;
   }
 
+  // Если это НЕ режим владельца — полностью скрываем блок "Настройки" и "Заметки".
+  if (!IS_OWNER_MODE) {
+    if (els.settingsTitle) els.settingsTitle.style.display = "none";
+    if (els.settingsAnchorDate) els.settingsAnchorDate.style.display = "none";
+    if (els.settingsAnchorType) els.settingsAnchorType.style.display = "none";
+    if (els.settingsButtons) els.settingsButtons.style.display = "none";
+    if (els.notesSection) els.notesSection.style.display = "none";
+  } else {
+    // В режиме владельца показываем текущую официальную точку отсчёта.
+    // Сам график всё равно считается по OFFICIAL_ANCHOR.
+    els.anchorDate.value = state.anchorDate;
+    els.anchorType.value = state.anchorType;
+  }
+
   // Events
   els.btnPrevMonth.addEventListener("click", () => {
     viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() - 1, 1);
     resetSelection();
-    setHint("Переключили месяц.");
+    // Подсказку при переключении месяца не меняем, чтобы не мешать.
   });
 
   els.btnNextMonth.addEventListener("click", () => {
     viewDate = new Date(viewDate.getFullYear(), viewDate.getMonth() + 1, 1);
     resetSelection();
-    setHint("Переключили месяц.");
+    // Подсказку при переключении месяца не меняем, чтобы не мешать.
   });
 
   els.btnToday.addEventListener("click", () => {
     const now = new Date();
     viewDate = new Date(now.getFullYear(), now.getMonth(), 1);
     setSelectedDay(toISODateLocal(now));
-    setHint("Ок, показал текущий месяц.");
+    // При переходе на сегодня подсказку тоже не трогаем.
   });
 
   els.btnShare.addEventListener("click", async () => {
     const url = getShareUrl(state);
     try {
       await setClipboard(url);
+      // Подсказку можно обновить, чтобы дать понять, что всё ок.
       setHint("Ссылка скопирована. Можешь отправить близким.");
     } catch {
-      setHint("Не получилось скопировать. Ссылка в адресной строке уже с настройками.");
+      setHint("Не получилось скопировать ссылку автоматически.");
     }
   });
 
@@ -308,7 +346,7 @@ function main() {
     state.anchorType = type === "off" ? "off" : "work";
     saveState(state);
     render();
-    setHint("Настройки сохранены.");
+      setHint("Настройки сохранены.");
   });
 
   els.btnReset.addEventListener("click", () => {
@@ -345,7 +383,7 @@ function main() {
   // Init
   initFeedbackLink();
   render();
-  setHint("Готово. Выбери день или настрой точку отсчёта.");
+  // Стартовую подсказку убрали, чтобы ничего лишнего не писать под календарём.
 }
 
 document.addEventListener("DOMContentLoaded", main);
