@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Calendar.Vystavkin.ru — график 3/3</title>
+    <meta name="description" content="Calendar.Vystavkin.ru — личный календарь с графиком 3/3, заметками и ссылкой для близких." />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app" id="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand__avatar-wrap">
+            <img
+              class="brand__avatar"
+              src="./avatar.png"
+              alt="Vystavkin M.M."
+            />
+          </div>
+          <div class="brand__text">
+            <div class="brand__subtitle">Мой график</div>
+            <div class="brand__name">Vystavkin M.M.</div>
+          </div>
+        </div>
+
+        <div class="topbar__actions">
+          <button class="btn btn--ghost" id="btnToday" type="button">Сегодня</button>
+          <button class="btn btn--ghost" id="btnShare" type="button" title="Скопировать ссылку с настройками">
+            Поделиться
+          </button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="card calendar">
+          <div class="calendar__header">
+            <button class="icon-btn" id="btnPrevMonth" type="button" aria-label="Предыдущий месяц">‹</button>
+            <div class="calendar__title" id="monthTitle">—</div>
+            <button class="icon-btn" id="btnNextMonth" type="button" aria-label="Следующий месяц">›</button>
+          </div>
+
+          <div class="calendar__legend">
+            <div class="legend-item"><span class="dot dot--work"></span> Работа</div>
+            <div class="legend-item"><span class="dot dot--off"></span> Выходной</div>
+            <div class="legend-item"><span class="dot dot--today"></span> Сегодня</div>
+          </div>
+
+          <div class="calendar__grid" id="calendarGrid" aria-label="Календарь"></div>
+
+          <div class="calendar__footer">
+            <div class="hint" id="hintText">Нажми на день, чтобы добавить заметку.</div>
+          </div>
+        </section>
+
+        <aside class="card panel" id="sidePanel">
+          <div class="panel__title" id="settingsTitle">Настройки</div>
+
+          <div class="field" id="settingsAnchorDate">
+            <label class="label" for="anchorDate">Точка отсчёта графика (дата)</label>
+            <input class="input" id="anchorDate" type="date" />
+            <div class="help">
+              Это дата, от которой мы считаем цикл 3/3. По умолчанию — сегодня.
+            </div>
+          </div>
+
+          <div class="field" id="settingsAnchorType">
+            <label class="label" for="anchorType">Что это за день?</label>
+            <select class="input" id="anchorType">
+              <option value="work">Рабочий (день 1 из 3)</option>
+              <option value="off">Выходной (день 1 из 3)</option>
+            </select>
+          </div>
+
+          <div class="row" id="settingsButtons">
+            <button class="btn" id="btnSaveSettings" type="button">Сохранить</button>
+            <button class="btn btn--ghost" id="btnReset" type="button">Сброс</button>
+          </div>
+
+          <hr class="sep" />
+
+          <div id="notesSection">
+            <div class="panel__title">Заметка на день</div>
+            <div class="field">
+              <div class="label" id="noteDateLabel">Выбери день в календаре</div>
+              <textarea class="input textarea" id="noteText" rows="5" placeholder="Например: смена, тренировка, встреча…"></textarea>
+            </div>
+            <div class="row">
+              <button class="btn" id="btnSaveNote" type="button" disabled>Сохранить заметку</button>
+              <button class="btn btn--ghost" id="btnDeleteNote" type="button" disabled>Удалить</button>
+            </div>
+          </div>
+
+          <hr class="sep" />
+
+          <div class="panel__title">Обратная связь</div>
+          
+          <a
+            class="btn btn--ghost btn--full"
+            id="feedbackLink"
+            href="#"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Написать в Telegram
+          </a>
+        </aside>
+      </main>
+
+      
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
