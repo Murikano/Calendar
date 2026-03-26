@@ -31,11 +31,12 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   color: var(--text);
-  background:
-    radial-gradient(1200px 600px at 20% 10%, rgba(181, 23, 158, 0.22), transparent 60%),
-    radial-gradient(900px 500px at 90% 20%, rgba(76, 201, 240, 0.20), transparent 55%),
-    radial-gradient(900px 600px at 30% 90%, rgba(255, 183, 3, 0.12), transparent 60%),
-    linear-gradient(180deg, #070a14, #0b1020);
+  /* Ember Glow: чёрная база + 3 огненных слоя снизу */
+  background-color: #000;
+  background-image:
+    radial-gradient(circle at 50% 100%, rgba(255, 69, 0, 0.6) 0%, transparent 60%),
+    radial-gradient(circle at 50% 100%, rgba(255, 140, 0, 0.4) 0%, transparent 70%),
+    radial-gradient(circle at 50% 100%, rgba(255, 215, 0, 0.3) 0%, transparent 80%);
 }
 
 a {
